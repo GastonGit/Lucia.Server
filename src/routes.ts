@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import indexRouter from './routes/index';
-import exampleRouter from './routes/example';
+import mangaRouter from './routes/manga';
 
 const routes = Router();
 
 routes.use('/', indexRouter);
-routes.use('/example', exampleRouter);
+routes.use('/manga', mangaRouter);
 
 export default routes;
