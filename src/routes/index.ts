@@ -3,7 +3,7 @@ const indexRouter = Router();
 import db from '../../database/db';
 
 indexRouter.get('/', async (_req: Request, res: Response) => {
-    const manga = await db.getManga();
+    const manga = await db.getGallery();
     res.send(manga);
 });
 
