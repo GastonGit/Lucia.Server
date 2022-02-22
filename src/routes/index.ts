@@ -1,9 +1,10 @@
 import { Router, Request, Response } from 'express';
 const indexRouter = Router();
-import itemData from '../../db/itemData.json';
+import db from '../../database/db';
 
-indexRouter.get('/', (_req: Request, res: Response) => {
-    res.send(itemData);
+indexRouter.get('/', async (_req: Request, res: Response) => {
+    const manga = await db.getManga();
+    res.send(manga);
 });
 
 export default indexRouter;
