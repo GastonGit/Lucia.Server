@@ -8,7 +8,7 @@ class Database {
         return await this.selectData('manga');
     }
 
-    selectData(tableName: any) {
+    selectData(tableName: string) {
         return db(tableName)
             .select()
             .then((resp) => resp);
