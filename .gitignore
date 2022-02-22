@@ -133,3 +133,4 @@ config.json
 # Temp
 database.sqlite
 knexfile.ts
+*.sqlite-journal
