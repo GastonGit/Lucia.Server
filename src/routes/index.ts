@@ -7,4 +7,11 @@ indexRouter.get('/', async (_req: Request, res: Response) => {
     res.send(manga);
 });
 
+indexRouter.get('/:page', async (req: Request, res: Response) => {
+    const page = parseInt(req.params.page);
+    const gallery = await db.getPage(page);
+
+    res.send(gallery);
+});
+
 export default indexRouter;

@@ -8,6 +8,13 @@ class Database {
         return db('manga').select().limit(21);
     }
 
+    async getPage(page: number) {
+        return db('manga')
+            .select()
+            .offset((page - 1) * 21)
+            .limit(21);
+    }
+
     async getManga(id: number) {
         const information = await db('manga')
             .select()
