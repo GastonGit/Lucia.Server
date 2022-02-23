@@ -6,7 +6,7 @@ export async function up(knex: Knex): Promise<void> {
     if (!mangaExists) {
         return knex.schema.createTable('manga', function (table) {
             table.increments();
-            table.string('directory').notNullable();
+            table.string('directory').unique().notNullable();
             table.string('title').notNullable();
             table.boolean('active').notNullable();
             table.string('author').notNullable();
