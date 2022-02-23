@@ -9,7 +9,8 @@
     "dev": "ts-node-dev -r dotenv/config --respawn src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky install",
-    "knex:migrate:make": "knex --knexfile knexfile.ts migrate:make -x ts",
+    "knex:migrate:make-create_manga_table": "knex --knexfile knexfile.ts migrate:make create_manga_table -x ts",
+    "knex:migrate:make-create_images_table": "knex --knexfile knexfile.ts migrate:make create_images_table -x ts",
     "knex:migrate:latest": "knex --knexfile knexfile.ts migrate:latest"
   },
   "devDependencies": {
