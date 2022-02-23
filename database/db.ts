@@ -9,7 +9,16 @@ class Database {
     }
 
     async getManga(id: number) {
-        return db('manga').select().where({ id: id });
+        const information = await db('manga')
+            .select()
+            .where({ id: id })
+            .first();
+        const images = await db('images').select().where({ manga_id: id });
+
+        return {
+            information: information,
+            images: images,
+        };
     }
 }
 
