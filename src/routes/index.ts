@@ -10,8 +10,9 @@ indexRouter.get('/', async (_req: Request, res: Response) => {
 indexRouter.get('/:page', async (req: Request, res: Response) => {
     const page = parseInt(req.params.page);
     const gallery = await db.getPage(page);
+    const maxPageCount = await db.getMaxPageCount();
 
-    res.send(gallery);
+    res.send({ gallery: gallery, maxPageCount: maxPageCount });
 });
 
 export default indexRouter;

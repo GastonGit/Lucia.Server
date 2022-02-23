@@ -8,6 +8,18 @@ class Database {
         return db('manga').select().limit(21);
     }
 
+    async getMaxPageCount() {
+        const query = await db('manga').count().first();
+        if (typeof query !== 'undefined') {
+            const count = query['count(*)'];
+
+            if (typeof count == 'number') {
+                return Math.ceil(count / 21);
+            }
+        }
+        return 0;
+    }
+
     async getPage(page: number) {
         return db('manga')
             .select()
