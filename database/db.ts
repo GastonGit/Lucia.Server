@@ -1,5 +1,6 @@
 import { knex } from 'knex';
 import knexFile from '../knexfile';
+import { type } from 'os';
 
 const db = knex(knexFile);
 
@@ -28,14 +29,19 @@ class Database {
             .select()
             .where({ id: id })
             .first();
-        const images = await db('images')
-            .select('name')
-            .where({ manga_id: id });
 
-        return {
-            information: information,
-            images: images,
-        };
+        if (typeof information !== 'undefined') {
+            const images = await db('images')
+                .select('name')
+                .where({ manga_id: id });
+
+            return {
+                information: information,
+                images: images,
+            };
+        } else {
+            return null;
+        }
     }
 }
 

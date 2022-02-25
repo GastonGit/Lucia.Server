@@ -11,22 +11,27 @@ mangaRouter.get('/', async (req: Request, res: Response) => {
     }
 
     const pureManga = await db.getManga(id);
-    const images = pureManga.images.map(
-        (image) =>
-            process.env.SERVER_URL +
-            '/media/' +
-            pureManga.information.directory +
-            '/' +
-            pureManga.information.bucket +
-            '/' +
-            image.name,
-    );
 
-    res.send({
-        title: pureManga.information.title,
-        author: pureManga.information.author,
-        images: images,
-    });
+    if (pureManga !== null) {
+        const images = pureManga.images.map(
+            (image) =>
+                process.env.SERVER_URL +
+                '/media/' +
+                pureManga.information.directory +
+                '/' +
+                pureManga.information.bucket +
+                '/' +
+                image.name,
+        );
+
+        res.send({
+            title: pureManga.information.title,
+            author: pureManga.information.author,
+            images: images,
+        });
+    } else {
+        res.status(400).send('That manga does not exist.');
+    }
 });
 
 export default mangaRouter;
