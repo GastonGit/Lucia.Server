@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import indexRouter from './routes/index';
 import mangaRouter from './routes/manga';
+import galleryRouter from './routes/gallery';
 
 const routes = Router();
 
-routes.use('/', indexRouter);
+routes.use('/gallery', galleryRouter);
 routes.use('/manga', mangaRouter);
 
 export default routes;

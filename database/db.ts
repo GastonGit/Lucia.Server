@@ -4,10 +4,6 @@ import knexFile from '../knexfile';
 const db = knex(knexFile);
 
 class Database {
-    async getGallery() {
-        return db('manga').select().limit(21);
-    }
-
     async getMaxPageCount() {
         const query = await db('manga').count().first();
         if (typeof query !== 'undefined') {
@@ -20,7 +16,7 @@ class Database {
         return 0;
     }
 
-    async getPage(page: number) {
+    async getGallery(page = 1) {
         return db('manga')
             .select()
             .offset((page - 1) * 21)
