@@ -18,5 +18,6 @@ app.use(express.json());
 app.use(routes);
 
 app.listen(PORT, (): void => {
-    console.log(`Server Running at https://localhost:${PORT}`);
+    process.env.SERVER_URL = 'http://localhost:' + PORT;
+    console.log(`Server Running at ${process.env.SERVER_URL}`);
 });

@@ -10,8 +10,25 @@ galleryRouter.get('/', async (req: Request, res: Response) => {
         page = parseInt(queryPage);
     }
 
-    const gallery = await db.getGallery(page);
+    const pureGallery = await db.getGallery(page);
     const maxPageCount = await db.getMaxPageCount();
+
+    const gallery = [];
+    for (let i = 0; i < pureGallery.length; i++) {
+        if (pureGallery[i].active) {
+            gallery.push({
+                id: pureGallery[i].id,
+                title: pureGallery[i].title,
+                author: pureGallery[i].author,
+                thumbnail:
+                    process.env.SERVER_URL +
+                    '/media/' +
+                    pureGallery[i].directory +
+                    '/' +
+                    pureGallery[i].thumbnail,
+            });
+        }
+    }
 
     res.send({ gallery: gallery, maxPageCount: maxPageCount });
 });
