@@ -28,7 +28,9 @@ class Database {
             .select()
             .where({ id: id })
             .first();
-        const images = await db('images').select().where({ manga_id: id });
+        const images = await db('images')
+            .select('name')
+            .where({ manga_id: id });
 
         return {
             information: information,

@@ -1,17 +1,32 @@
 import { Router, Request, Response } from 'express';
 const mangaRouter = Router();
-import itemData from '../../database/itemData.json';
 import db from '../../database/db';
 
-mangaRouter.get('/', async (_req: Request, res: Response) => {
-    res.send(itemData);
-});
+mangaRouter.get('/', async (req: Request, res: Response) => {
+    const queryID = req.query.id;
+    let id = 1;
 
-mangaRouter.get('/:id', async (req: Request, res: Response) => {
-    const id = parseInt(req.params.id);
-    const manga = await db.getManga(id);
+    if (typeof queryID === 'string' && !Number.isNaN(parseInt(queryID))) {
+        id = parseInt(queryID);
+    }
 
-    res.send(manga);
+    const pureManga = await db.getManga(id);
+    const images = pureManga.images.map(
+        (image) =>
+            process.env.SERVER_URL +
+            '/media/' +
+            pureManga.information.directory +
+            '/' +
+            pureManga.information.bucket +
+            '/' +
+            image.name,
+    );
+
+    res.send({
+        title: pureManga.information.title,
+        author: pureManga.information.author,
+        images: images,
+    });
 });
 
 export default mangaRouter;
