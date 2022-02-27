@@ -1,6 +1,5 @@
 import { knex } from 'knex';
 import knexFile from '../knexfile';
-import { type } from 'os';
 
 const db = knex(knexFile);
 
