@@ -32,12 +32,13 @@ class Database {
 
         if (typeof information !== 'undefined') {
             const images = await db('images')
-                .select('name')
+                .select('name', 'thumbnail')
                 .where({ manga_id: id });
 
             return {
                 information: information,
-                images: images,
+                images: images.map((image) => image.name),
+                thumbnails: images.map((image) => image.thumbnail),
             };
         } else {
             return null;

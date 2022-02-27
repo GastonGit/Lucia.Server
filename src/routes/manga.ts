@@ -21,13 +21,23 @@ mangaRouter.get('/', async (req: Request, res: Response) => {
                 '/' +
                 pureManga.information.bucket +
                 '/' +
-                image.name,
+                image,
+        );
+
+        const thumbnails = pureManga.thumbnails.map(
+            (thumb) =>
+                process.env.SERVER_URL +
+                '/media/' +
+                pureManga.information.directory +
+                '/thumbnails/' +
+                thumb,
         );
 
         res.send({
             title: pureManga.information.title,
             author: pureManga.information.author,
             images: images,
+            thumbnails: thumbnails,
         });
     } else {
         res.status(400).send('That manga does not exist.');

@@ -7,6 +7,7 @@ export async function up(knex: Knex): Promise<void> {
         return knex.schema.createTable('images', function (table) {
             table.increments();
             table.string('name');
+            table.string('thumbnail');
             table.integer('manga_id');
             table.foreign('manga_id').references('id').inTable('manga');
         });
