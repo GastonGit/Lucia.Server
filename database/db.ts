@@ -43,6 +43,11 @@ class Database {
             return null;
         }
     }
+
+    async findMangaByTitle(title: string) {
+        const trimmedTitle = title.replace(/[^A-Za-z0-9\s!?]/g, '');
+        return db('manga').whereLike('title', '%' + trimmedTitle + '%');
+    }
 }
 
 export default new Database();
