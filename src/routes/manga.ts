@@ -33,14 +33,16 @@ mangaRouter.get('/', async (req: Request, res: Response) => {
                 thumb,
         );
 
-        res.send({
-            title: pureManga.information.title,
-            author: pureManga.information.author,
-            images: images,
-            thumbnails: thumbnails,
-        });
+        res.send([
+            {
+                title: pureManga.information.title,
+                author: pureManga.information.author,
+                images: images,
+                thumbnails: thumbnails,
+            },
+        ]);
     } else {
-        res.status(400).send('That manga does not exist.');
+        res.send([]);
     }
 });
 
