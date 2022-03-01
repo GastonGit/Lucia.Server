@@ -82,7 +82,8 @@ class Database {
             .where('active', 1)
             .whereLike('title', '%' + trimmedTitle + '%')
             .offset((page - 1) * 21)
-            .limit(21);
+            .limit(21)
+            .orderBy('title');
 
         const maxCount = await db('manga')
             .whereLike('title', '%' + trimmedTitle + '%')
