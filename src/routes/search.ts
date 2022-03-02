@@ -12,7 +12,7 @@ searchRouter.get('/', async (req: Request, res: Response) => {
     }
 
     if (typeof queryTitle === 'string') {
-        const foundMangas = await db.findMangaByTitle(queryTitle, page);
+        const foundMangas = await db.findMangaByTitleOrTag(queryTitle, page);
         res.send(foundMangas);
     } else {
         res.status(400).send('Bad request');

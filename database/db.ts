@@ -76,19 +76,41 @@ class Database {
         return gallery;
     }
 
-    async findMangaByTitle(title: string, page: number) {
-        const trimmedTitle = title.replace(/[^A-Za-z0-9\s!?]/g, '');
-        const mangas = await db('manga')
-            .where('active', 1)
-            .whereLike('title', '%' + trimmedTitle + '%')
-            .offset((page - 1) * 21)
-            .limit(21)
-            .orderBy('title');
+    async findMangaByTitleOrTag(searchQuery: string, page: number) {
+        const trimmedQuery = searchQuery
+            .replace(/[^A-Za-z0-9\s!?]/g, '')
+            .toLowerCase()
+            .trim();
+        const unmappedTags = searchQuery
+            .replace(/[^A-Za-z0-9\s!?]/g, '')
+            .split(' ')
+            .filter((tag) => tag);
 
-        const maxCount = await db('manga')
-            .whereLike('title', '%' + trimmedTitle + '%')
-            .count()
-            .first();
+        // TODO: Temp solution to fix case sensitivity problems with "whereIn"
+        const tags = unmappedTags.map(
+            (tag) => tag[0].toUpperCase() + tag.slice(1).toLowerCase(),
+        );
+
+        const findMangaQuery = db('manga')
+            .select('*')
+            .where('active', 1)
+            .whereLike('title', '%' + trimmedQuery + '%')
+            .orWhereIn(
+                'manga.id',
+                db('MangaTags')
+                    .select('manga_id')
+                    .join('tags', 'tags.id', 'MangaTags.tag_id')
+                    .whereIn('tags.tag_name', tags)
+                    .groupBy('MangaTags.manga_id')
+                    .having(
+                        db.raw(
+                            'count(distinct tags.tag_name) = ' + tags.length,
+                        ),
+                    ),
+            );
+
+        const mangas = await findMangaQuery.offset((page - 1) * 21).limit(21);
+        const maxCount = await findMangaQuery.count().first();
 
         const maxPageCount = Math.ceil(
             (typeof maxCount?.['count(*)'] === 'number'
