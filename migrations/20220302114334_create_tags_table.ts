@@ -7,7 +7,7 @@ export async function up(knex: Knex): Promise<void> {
     if (!imagesExists) {
         return knex.schema.createTable(tableName, function (table) {
             table.increments();
-            table.string('name');
+            table.string('tag_name');
         });
     }
 }
