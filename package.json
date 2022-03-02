@@ -11,6 +11,8 @@
     "prepare": "husky install",
     "knex:migrate:make-create_manga_table": "knex --knexfile knexfile.ts migrate:make create_manga_table -x ts",
     "knex:migrate:make-create_images_table": "knex --knexfile knexfile.ts migrate:make create_images_table -x ts",
+    "knex:migrate:make-create_tags_table": "knex --knexfile knexfile.ts migrate:make create_tags_table -x ts",
+    "knex:migrate:make-create_mangatags_table": "knex --knexfile knexfile.ts migrate:make create_mangatags_table -x ts",
     "knex:migrate:latest": "knex --knexfile knexfile.ts migrate:latest"
   },
   "devDependencies": {
