@@ -107,7 +107,8 @@ class Database {
                             'count(distinct tags.tag_name) = ' + tags.length,
                         ),
                     ),
-            );
+            )
+            .orderBy('title');
 
         const mangas = await findMangaQuery.offset((page - 1) * 21).limit(21);
         const maxCount = await findMangaQuery.count().first();
