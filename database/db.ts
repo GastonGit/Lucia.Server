@@ -32,6 +32,7 @@ class Database {
     async getGallery(page = 1) {
         const mangas = await db('manga')
             .select()
+            .orderBy('created_at', 'desc')
             .offset((page - 1) * 21)
             .limit(21);
         return this.trimMangaResponse(mangas as PureManga[]);
