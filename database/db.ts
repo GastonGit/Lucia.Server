@@ -83,42 +83,68 @@ class Database {
             .toLowerCase()
             .trim();
         const unmappedTags = searchQuery
-            .replace(/[^A-Za-z0-9\s!?]/g, '')
+            .replace(/[^A-Za-z0-9\s!?-]/g, '')
             .split(' ')
             .filter((tag) => tag);
 
-        // TODO: Temp solution to fix case sensitivity problems with "whereIn"
-        const tags = unmappedTags.map(
-            (tag) => tag[0].toUpperCase() + tag.slice(1).toLowerCase(),
+        // TODO: Final maps are temp solutions to fix case sensitivity problems with "whereIn" during SQL query
+        const positiveTags = unmappedTags
+            .filter((tag) => !tag.includes('-'))
+            .map((tag) => tag[0].toUpperCase() + tag.slice(1).toLowerCase());
+        const negativeTags = unmappedTags
+            .filter((tag) => tag.includes('-'))
+            .map((tag) => tag.replace(/[-]/g, ''))
+            .map((tag) => tag[0].toUpperCase() + tag.slice(1).toLowerCase());
+
+        let findMangaQuery;
+        const negativeMangasQuery = await db('MangaTags')
+            .select('manga_id')
+            .join('tags', 'tags.id', 'MangaTags.tag_id')
+            .whereIn('tags.tag_name', negativeTags)
+            .groupBy('MangaTags.manga_id')
+            .having(
+                db.raw(
+                    'count(distinct tags.tag_name) = ' + negativeTags.length,
+                ),
+            );
+        const negativeMangaCollection = negativeMangasQuery.map(
+            (manga) => manga.manga_id,
         );
 
-        const findMangaQuery = db('manga')
-            .select('*')
-            .where('active', 1)
-            .whereLike('title', '%' + trimmedQuery + '%')
-            .orWhereIn(
-                'manga.id',
-                db('MangaTags')
-                    .select('manga_id')
-                    .join('tags', 'tags.id', 'MangaTags.tag_id')
-                    .whereIn('tags.tag_name', tags)
-                    .groupBy('MangaTags.manga_id')
-                    .having(
-                        db.raw(
-                            'count(distinct tags.tag_name) = ' + tags.length,
+        if (negativeTags.length >= 1 && positiveTags.length === 0) {
+            findMangaQuery = db('manga')
+                .select('*')
+                .where('active', 1)
+                .groupBy('title')
+                .havingNotIn('manga.id', negativeMangaCollection)
+                .orderBy('title');
+        } else {
+            findMangaQuery = db('manga')
+                .select('*')
+                .where('active', 1)
+                .whereLike('title', '%' + trimmedQuery + '%')
+                .orWhereIn(
+                    'manga.id',
+                    db('MangaTags')
+                        .select('manga_id')
+                        .join('tags', 'tags.id', 'MangaTags.tag_id')
+                        .whereIn('tags.tag_name', positiveTags)
+                        .groupBy('MangaTags.manga_id')
+                        .having(
+                            db.raw(
+                                'count(distinct tags.tag_name) = ' +
+                                    positiveTags.length,
+                            ),
                         ),
-                    ),
-            )
-            .orderBy('title');
-
+                )
+                .groupBy('title')
+                .havingNotIn('manga.id', negativeMangaCollection)
+                .orderBy('title');
+        }
+        const maxCount = await findMangaQuery;
         const mangas = await findMangaQuery.offset((page - 1) * 21).limit(21);
-        const maxCount = await findMangaQuery.count().first();
 
-        const maxPageCount = Math.ceil(
-            (typeof maxCount?.['count(*)'] === 'number'
-                ? maxCount['count(*)']
-                : 1) / 21,
-        );
+        const maxPageCount = Math.ceil(maxCount.length / 21);
 
         return {
             gallery: this.trimMangaResponse(mangas as PureManga[]),
