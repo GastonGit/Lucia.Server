@@ -38,6 +38,17 @@ class Database {
         return this.trimMangaResponse(mangas as PureManga[]);
     }
 
+    async getTagsByMangaID(id: number) {
+        const tags = await db('tags')
+            .select('tag_name')
+            .whereIn(
+                'id',
+                db('MangaTags').select('tag_id').where('manga_id', id),
+            )
+            .groupBy('tag_name');
+        return tags.map((tag) => tag['tag_name']);
+    }
+
     async getManga(id: number) {
         const information = await db('manga')
             .select()
@@ -49,10 +60,13 @@ class Database {
                 .select('name', 'thumbnail')
                 .where({ manga_id: id });
 
+            const tags = await this.getTagsByMangaID(id);
+
             return {
                 information: information,
                 images: images.map((image) => image.name),
                 thumbnails: images.map((image) => image.thumbnail),
+                tags: tags,
             };
         } else {
             return null;

@@ -39,6 +39,7 @@ mangaRouter.get('/', async (req: Request, res: Response) => {
                 author: pureManga.information.author,
                 images: images,
                 thumbnails: thumbnails,
+                tags: pureManga.tags,
             },
         ]);
     } else {
